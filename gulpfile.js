@@ -51,5 +51,21 @@ gulp.task('html', function() {
         .pipe(browserSync.stream());
 });
 
+gulp.task('watch', function() {
+    gulp.series('scripts')();
+    gulp.series('styles')();
+    gulp.series('html')();
+
+    setTimeout(function() {
+        browserSync.init({
+            server: "dist"
+        });
+    
+        gulp.watch('src/assets/js/**/*.js').on('change', gulp.series('scripts'));
+        gulp.watch('src/assets/scss/**/*.scss').on('change', gulp.series('styles'));
+        gulp.watch('src/html/**/*.html').on('change', gulp.series('html'));
+    }, 2500);
+});
+
 gulp.task('default', gulp.series('scripts', 'styles', 'html'));
 gulp.task('production', gulp.series('scripts', 'styles', 'images', 'html'));
