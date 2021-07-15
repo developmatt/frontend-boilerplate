@@ -4,9 +4,12 @@ const   gulp            = require('gulp'),
         rename          = require('gulp-rename'),
         minify          = require('gulp-minifier'),
         concat          = require('gulp-concat'),
-        browserSync     = require('browser-sync').create();
+        browserSync     = require('browser-sync').create(),
+        webpackStream   = require('webpack-stream'),
+        {scriptsConfig} = require('./webpack.js'),
+        webpack         = require('webpack');
 
-gulp.task('sass', function() {
+gulp.task('styles', function() {
     const sassOptions = {
         outputStyle: 'expanded'
     };
@@ -21,6 +24,18 @@ gulp.task('sass', function() {
         minifyCSS: true
     }))
     .pipe(concat('style.min.css'))
-    .pipe(gulp.dest('dist/assets/'))
+    .pipe(gulp.dest('dist/assets/css'))
     .pipe(browserSync.stream());
 });
+
+gulp.task('scripts', function() {
+    return gulp.src('./src/assets/js/index.js')
+    .pipe(webpackStream(scriptsConfig), webpack)
+    .pipe(concat('scripts.js'))
+    .pipe(rename({
+        suffix: '.min'
+    }))
+    .pipe(gulp.dest('dist/assets/js'));
+});
+
+gulp.task('default', gulp.series('scripts', 'styles'));
