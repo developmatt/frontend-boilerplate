@@ -7,7 +7,8 @@ const   gulp            = require('gulp'),
         browserSync     = require('browser-sync').create(),
         webpackStream   = require('webpack-stream'),
         {scriptsConfig} = require('./webpack.js'),
-        webpack         = require('webpack');
+        webpack         = require('webpack'),
+        imagemin        = require('gulp-imagemin');
 
 gulp.task('styles', function() {
     const sassOptions = {
@@ -38,4 +39,10 @@ gulp.task('scripts', function() {
     .pipe(gulp.dest('dist/assets/js'));
 });
 
-gulp.task('default', gulp.series('scripts', 'styles'));
+gulp.task('images', function() {
+    return gulp.src('src/assets/images/**/*')
+        .pipe(imagemin())
+        .pipe(gulp.dest('dist/assets/images'));
+})
+
+gulp.task('default', gulp.series('scripts', 'styles', 'images'));
